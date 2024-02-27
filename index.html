@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text obfuscator</title>
+
+<style>
+    :root 
+        {
+        color-scheme: dark;
+        }
+    #report 
+        {
+        color: yellow;
+        }
+</style>
+
+<script>
+    "use strict"  
+    // By Frode Eika Sandnes, Oslo Metropolitan University, February 27, 2024.
+    function obfuscateText()
+        {
+        let text = document.getElementById("inText").value;
+        let maxWordLength = 6;
+        let invisibleSpace = "<span style='font-size: 1pt;'> </span>";
+        let outText = text.split(" ")
+                        .map(word => word.length > maxWordLength ? insert(word, Math.round(Math.random()*(word.length - 2)+1), invisibleSpace): word)
+                        .join(" ");
+        document.getElementById("report").innerHTML = outText;
+        const blob = new Blob([outText], {type: 'text/html'});
+        const clipboardItem = new window.ClipboardItem({ 'text/html': blob });
+        navigator.clipboard.write([clipboardItem]);  
+        changeView("input", "output");  
+        }
+    function changeView(previous,next)
+        {
+        document.getElementById(previous).style = "display: none;";
+        document.getElementById(next).style = "display: block;";                        
+        }     
+    // insert string     
+    function insert(str, index, value) 
+        {
+        return str.substr(0, index) + value + str.substr(index);
+        }                   
+    </script>   
+</head>
+<body>
+    <div id="input">
+        <h1>Text obfuscator (concept demo)</h1>
+        <p>Many educators and administrators place too much trust in plagiarism detection tools.</p>
+
+        <p>This is a demonstration of how some plagiarism checks can be easily bypassed by very simple means.</p>
+
+        <p>Paste some text from your word processor in the text area below. Copy and paste the result back into the word processor. Test the result with your plagiarism detection tool. This tool simply split long words into two parts with "invisible" spaces.</p>
+
+        <p>DISCLAIMER: Do not cheat! Do not use this tool to cheat. Cheating can result in severe negative consequences. Cheating attempts using this tool are easily detected.</p>
+
+        <textarea name="inText" id="inText" cols="80" rows="6" onChange="obfuscateText()"></textarea>
+        <br>
+        <button>Obfuscate text!</button>
+    </div>
+
+    <div id="output" style="display: none" >
+        <h2>Obfuscated text:</h2>
+        <p id="report"></p>
+        <p>(The text has been copied to the clipboard)</p>
+        <button onClick="location.reload();">Obfuscate again!</button>
+    </div>
+</body>
+</html>
